@@ -20,10 +20,20 @@ In this project, we will be working on all three tasks: localize the robot, gene
 ## Background
 In the area of localization, common methods include Kalman Filter (including EKF, Unscented KF, etc.) and Particle Filter.
 
-The Kalman filter is an estimation algorithm that can provide sufficiently accurate location of an object using sensor readings from multiple sources. While the vanilla Kalman Filter can work with linear systems, Extended Kalman Filter and Unscented Kalman Filter are more accurate for nonlinear system, which is more common in real-world. They can provide fairly fast updates and hence are used in many real-time systems.
- 
-Particle filter on the other hand is a probabilistic based method and does not use complex mathematically linear/nonlinear equations. Unlike Kalman Filter, its performance can be easily tuned according to the computing power of the system by adjusting the number of particles used in localization, which can be a great advantage in complex scenarios.
+### Kalman Filter
+The Kalman filter is an estimation algorithm that can provide sufficiently accurate location of an object using sensor readings from multiple sources. Kalman Filter can take readings with noises and assumes that the noises/uncertainties are Gaussian. By running the Update-Predict cycle, it can compute a Kalman Gain that eventually provides to an optimal estimation of system status at each step. If properly designed, the localization result from Kalman Filter will converge quickly after some iterations and can be very accurate.
 
+While the vanilla Kalman Filter can work with linear systems, Extended Kalman Filter and Unscented Kalman Filter are more accurate for nonlinear system, which is more common in real-world. They can provide fairly fast updates and hence are used in many real-time systems.
+
+### Particle Filter
+Particle filter on the other hand is a probabilistic based method and does not use complex mathematically linear/nonlinear equations. It uses a large number of particles to represent the possible locations of the object. These particles are resampled at each iteration as the object moves. During the resampling process, based on the range measurements between the object and surrounding environment, particles that presents a higher probability to produce such measurements will more likely to enter next iteration. As this process goes on, after some iterations, the particles will converge to the actual location of the object
+ 
+
+### Comparison of Filters
+In general, Particle Filter is easier and quicker to setup and use. Particle Filter does not require complex modeling and computation like in EKF or Unscented KF. Particle Filter can work with systems with non-Gaussian uncertainties, which Kalman Filter cannot. In addition, Particle Filter's performance can be easily tuned according to the computing power of the system simply by adjusting the number of particles to be used, which can be a great advantage over Kalman Filter in many scenarios.
+
+
+### Project Setup
 In this project, Adaptive Monte-Carlo Localization - adjusting the number of particles as needed is used with the help of the `amcl` package in ROS. 
 
 The map used in this project is shown below, where the robot needs to move with the presents of barriers. 
@@ -65,8 +75,6 @@ The next series of screenshots shows how the robot moves to destination.
 ![alt text](misc/move_12.png)
 
 ![alt text](misc/move_13.png)
-
-![alt text](misc/move_14.png)
 
 As seen in above screenshots, the robot was able to go around all obstacles and reach the final destination with anticipated orientation.
 
@@ -503,6 +511,8 @@ AMCL configuration is stored in the launch file below.
 
 
 ## Discussion
+
+## Parameter Tuning Process
 Tuning the cost parameters took quite a bit time. In fact the robot would not move under default parameters. The first thing to change was `transform_tolerance`. By changing both global and local `transform_tolerance` to 0.3, the robot was able to get the cost map, receive control command and started to move.
 
 The second thing to change was the update frequencies. By reducing `update_frequency` and `publish_frequency` down to `20` and `5`, respectively, the number of warnings reduced substantially, which helped with the further debugging.
@@ -520,6 +530,10 @@ Obstacle - wider on the bottom
 ![alt text](misc/obstacle_cross_section.png)
 
 Another lesson learned is that the above parameters need to be chosen carefully according to robot design and obstacles. For example, my custom robot originally had a tall chassis that had the laser scanner mounted also very tall. Consequently, the laser scanner was scanning the upper portion of the barrier, which however is not as wide as the bottom part. It made the robot think that it was still far away from the barrier and hence caused a collion with the lower part. By chaning the dimention of the robot, problem was solved.
+
+
+### Kidnapped Robot Problem
+While localization with Particle Filters, this robot can work kidnapped robot scenario. The way Particle Filter works is that it initializes itself with particles randomly placed across the map and then after some iterations of the resampling process, the particles will converge to the actual location of the robot. If kidnapped, this process will simply happen again and we will still be able to localize the robot.
 
 
 ## Future Work
