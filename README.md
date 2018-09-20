@@ -540,3 +540,29 @@ While localization with Particle Filters, this robot can work kidnapped robot sc
 The `amcl` package offered by ROS ecosystem seems really powerful and easy to use. For scenarios that robots travel in a relatively small environment, it probably will be the first localization method I would use. It however requires the obstacles to be known and static, making it difficult to be used directly for more complex scenarios, e.g. self-driving car trying to avoid other cars running on the road.
 
 In the future, a 3-D laser scanner can be used to understand the environment better and the robot's design will then not affect the interpretation of laser scan readings - e.g. when obstacles are wider on the bottom and laser scanner is mounted high, the robot needs to be more careful not to hit the obstacle on the bottom.
+
+
+## How to use
+Clone repo and copy `udacity_bot` to `~/catkin_ws/src`. Then, compile the code:
+```bash
+cd ~/catkin_ws
+catkin_make
+```
+
+Open first terminal and run:
+```bash
+source devel/setup.bash
+roslaunch udacity_bot udacity_world.launch
+```
+
+Open second terminal and run:
+```bash
+source devel/setup.bash
+roslaunch udacity_bot amcl.launch
+```
+
+Either manually assign a destination or open third terminal and run the following command to assign destination required by the course:
+```bash
+source devel/setup.bash
+rosrun udacity_bot navigation_goal
+```
