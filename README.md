@@ -543,6 +543,17 @@ In the future, a 3-D laser scanner can be used to understand the environment bet
 
 
 ## How to use
+
+### Install dependencies
+```bash
+sudo apt-get install ros-kinetic-navigation
+sudo apt-get install ros-kinetic-map-server
+sudo apt-get install ros-kinetic-move-base
+rospack profile
+sudo apt-get install ros-kinetic-amcl
+```
+
+### Clone and run it
 Clone repo and copy `udacity_bot` to `~/catkin_ws/src`. Then, compile the code:
 ```bash
 cd ~/catkin_ws
